@@ -1,6 +1,69 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  <div class="container text-center p-5 my-5 bg-success text-white">
       <h1>PetiteUrl</h1>
       <p>A TinyURL clone webpage using Flask and MongoDB. </p>
+    </div>
+
+    <div class="container mt-3">
+    <p id="response"> </p>
+
+    <script>
+    $(document).ready(function() {
+      $("#url_form").submit(function( event ) {
+        event.preventDefault();
+        clear_form();
+        $.ajax({
+                    type: "POST",
+                    url: "{% url 'index' %}",
+                    data: {
+                       text: $('#url').val(),
+                       csrfmiddlewaretoken: '{{ csrf_token }}',
+                       dataType: "json",
+                    },
+                    success: function (data) {
+                       console.log(data.msg)
+                    },
+                    failure: function () {
+                       console.log('Error Encountered!')
+                    }
+                 });
+        });
+    });
+
+    function clear_form(){
+      $('#url').val('');
+    };
+
+    </script>
+
+<form id="url_form" >
+
+            {{ form.csrf_token }}
+            <p>
+                {{ form.url }}
+            <p>
+                {{ form.expires_option.label }}
+                {{ form.expires_option }}
+            </p>
+
+            <p id="date_local" style="display:none">
+                {{ form.expiration }}
+            </p>
+
+            <p>
+                {{ form.custom_hash_option.label }}
+                {{ form.custom_hash_option }}
+            </p>
+            <p id="personalized" style="display:none">
+                {{ form.personalized }}
+            </p>
+            <div id="unique_hash"></div><br>
+
+            {{ form.submit}}
+            <button type="reset" id="clear" class="btn btn-success"> Clear </button>
+          </form>
+
+    </div>
 {% endblock %}
