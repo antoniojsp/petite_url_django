@@ -1,7 +1,9 @@
 from .forms import IndexPage
 from .models import Urls
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
+from django.http import HttpResponseRedirect
+from .helpers import generate_hash
 
 
 def is_ajax(request):
@@ -16,9 +18,8 @@ def index(request):
 
         if data:
             response = {'msg': data}
-
-            a = Urls()
-            a.url = data
+            hash_value = generate_hash(length=8)
+            a = Urls(hash_value =hash_value, url=data, count=0)
             a.save()
             return JsonResponse(response)
         else:
@@ -28,4 +29,8 @@ def index(request):
     return render(request, "index.html", context)
 
 
+def redirect_view(request, hash):
+    mymember = Urls.objects.get(hash_value=hash)
+    context = {'form': IndexPage()}
 
+    return HttpResponseRedirect(mymember.url)
