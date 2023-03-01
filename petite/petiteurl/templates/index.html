@@ -11,34 +11,35 @@
 
     <script>
     $(document).ready(function() {
-      $("#url_form").submit(function( event ) {
+      $("#url_form").submit(function(event) {
         event.preventDefault();
-        clear_form();
         $.ajax({
-                    type: "POST",
-                    url: "{% url 'index' %}",
-                    data: {
-                       text: $('#url').val(),
-                       csrfmiddlewaretoken: '{{ csrf_token }}',
-                       dataType: "json",
-                    },
-                    success: function (data) {
-                       console.log(data.msg)
-                    },
-                    failure: function () {
-                       console.log('Error Encountered!')
-                    }
-                 });
+                type: "POST",
+                url: "{% url 'index' %}",
+                data: {
+                   text: $('#url').val(),
+                   csrfmiddlewaretoken: '{{ csrf_token }}',
+                   dataType: "json",
+                },
+                success: function (data) {
+                   console.log(data.msg);
+                   clear_form();
+
+                },
+                failure: function () {
+                   console.log('Error Encountered!');
+                }
+             });
         });
     });
 
     function clear_form(){
-      $('#url').val('');
+        $('#url').val('');
     };
 
     </script>
 
-<form id="url_form" >
+<form id="url_form"  method="POST">
 
             {{ form.csrf_token }}
             <p>
@@ -59,11 +60,14 @@
             <p id="personalized" style="display:none">
                 {{ form.personalized }}
             </p>
+
             <div id="unique_hash"></div><br>
 
-            {{ form.submit}}
             <button type="reset" id="clear" class="btn btn-success"> Clear </button>
-          </form>
+            <button type="submit" id="submit" class="btn btn-success"> Submit </button>
+
+  </form>
 
     </div>
+
 {% endblock %}
