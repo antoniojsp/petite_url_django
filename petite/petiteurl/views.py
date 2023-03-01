@@ -17,7 +17,7 @@ def index(request):
         if data:
             response = {'msg': data}
 
-            a = IndexPage()
+            a = Urls()
             a.url = data
             a.save()
             return JsonResponse(response)
