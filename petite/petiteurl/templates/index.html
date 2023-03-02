@@ -13,11 +13,14 @@
     $(document).ready(function() {
       $("#url_form").submit(function(event) {
         event.preventDefault();
+        console.log($('#expiration').val());
         $.ajax({
                 type: "POST",
                 url: "{% url 'index' %}",
                 data: {
                    text: $('#url').val(),
+                   exp_time: $('#expiration').val(),
+                   custom: $('#custom').val(),
                    csrfmiddlewaretoken: '{{ csrf_token }}',
                    dataType: "json",
                 },
@@ -31,11 +34,38 @@
                 }
              });
         });
+
+
+
+    $('#expires_opt').on('change', function() {
+        hide_show("#expires_opt", "#date_local", "#expiration");
     });
+
+    $('#custom_opt').on('change', function() {
+        hide_show("#custom_opt", "#personalized", "#custom");
+    });
+
+});
 
     function clear_form(){
         $('#url').val('');
+        $('#expiration').val('');
+        $('#custom').val('');
     };
+
+
+    function hide_show(id_div, id_elem, id_required){
+        if ($(id_div).is(':checked')) {
+            $(id_elem).show("fast");
+            $(id_required).attr("required", true);
+
+        }else{
+            $(id_elem).hide( "fast");
+            $(id_required).attr( "required", false);
+
+        }
+    };
+
 
     </script>
 
@@ -49,7 +79,8 @@
                 {{ form.expires_option }}
             </p>
 
-            <p id="date_local" style="display:none">
+            <p id="date_local" style="display: none;" >
+                {{ form.expiration.label }}
                 {{ form.expiration }}
             </p>
 
@@ -57,8 +88,10 @@
                 {{ form.custom_hash_option.label }}
                 {{ form.custom_hash_option }}
             </p>
-            <p id="personalized" style="display:none">
-                {{ form.personalized }}
+            <p id="personalized" style="display: none;">
+
+                {{ form.custom.label }}
+                {{ form.custom }}
             </p>
 
             <div id="unique_hash"></div><br>
