@@ -46,6 +46,6 @@ def index(request):
 
 def redirect_view(request, hashing: str):
     mymember = Urls.objects.get(hash_value=hashing)
-    context = {'form': IndexPage()}
-
+    mymember.count += 1
+    mymember.save()
     return HttpResponseRedirect(mymember.url)
