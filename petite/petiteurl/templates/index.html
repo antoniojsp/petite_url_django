@@ -15,11 +15,10 @@
 
 
 
-    $(document).ready(function() {
+   $(document).ready(function() {
 
       $("#url_form").submit(function(event) {
         event.preventDefault();
-        console.log($('#expiration').val());
         $.ajax({
                 type: "POST",
                 url: "{% url 'index' %}",
@@ -31,8 +30,32 @@
                    dataType: "json",
                 },
                 success: function (data) {
-                   console.log(data.hash);
+                   console.log(data.result);
                    clear_form();
+                   show_result(data.result);
+
+                },
+                failure: function () {
+                   console.log('Error Encountered!');
+                }
+             });
+        });
+
+        $("#custom").keyup(function(event) {
+        $.ajax({
+                type: "POST",
+                url: "{% url 'index' %}",
+                data: {
+                   text: $('#url').val(),
+                   exp_time: $('#expiration').val(),
+                   custom: $('#custom').val(),
+                   csrfmiddlewaretoken: '{{ csrf_token }}',
+                   dataType: "json",
+                },
+                success: function (data) {
+                   console.log(data.result);
+                   clear_form();
+                   show_result(data.result);
 
                 },
                 failure: function () {
@@ -50,7 +73,12 @@
     });
 
 });
+function show_result(message){
+    $("#result").show("fast");
 
+    $("#url_short").html("").append(message); // delete html content first then add new message
+    $("#url_short").attr("href", message);
+};
     function set_date(){
         var da = new Date();
         var y = (1900 + da.getYear())
@@ -63,8 +91,11 @@
 
     function clear_form(){
         $('#url_form')[0].reset();
+        $("#url_short").html("");
+        $("#result").hide("fast");
         hide("#date_local", "#expiration");
         hide("#personalized", "#custom");
+
     };
 
     function hide(id_elem, id_required){
@@ -89,6 +120,10 @@
 
 
     </script>
+<div id="result" class="alert alert-success" role="alert" style="display: none;" >
+  <h4 class="alert-heading">Your customize url is: </h4>
+    <a id="url_short"></a>
+</div>
 
 <form id="url_form"  method="POST">
 
