@@ -17,6 +17,14 @@
 
    $(document).ready(function() {
 
+
+        $( "#url" ).click(function() {
+           if ($("#url_short").html().length > 0) {
+               clear_form();
+           }
+
+        });
+
       $("#url_form").submit(function(event) {
         event.preventDefault();
         $.ajax({
@@ -31,7 +39,7 @@
                 },
                 success: function (data) {
                    console.log(data.result);
-                   clear_form();
+                   clear_form($('#expiration').val());
                    show_result(data.result);
 
                 },
@@ -42,26 +50,7 @@
         });
 
         $("#custom").keyup(function(event) {
-        $.ajax({
-                type: "POST",
-                url: "{% url 'index' %}",
-                data: {
-                   text: $('#url').val(),
-                   exp_time: $('#expiration').val(),
-                   custom: $('#custom').val(),
-                   csrfmiddlewaretoken: '{{ csrf_token }}',
-                   dataType: "json",
-                },
-                success: function (data) {
-                   console.log(data.result);
-                   clear_form();
-                   show_result(data.result);
-
-                },
-                failure: function () {
-                   console.log('Error Encountered!');
-                }
-             });
+            console.log($('#custom').val());
         });
 
     $('#expires_opt').on('change', function() {
@@ -73,12 +62,11 @@
     });
 
 });
-function show_result(message){
-    $("#result").show("fast");
-
-    $("#url_short").html("").append(message); // delete html content first then add new message
-    $("#url_short").attr("href", message);
-};
+    function show_result(message){
+        $("#result").show("fast");
+        $("#url_short").html("").append(message); // delete html content first then add new message
+        $("#url_short").attr("href", message);
+    };
     function set_date(){
         var da = new Date();
         var y = (1900 + da.getYear())
