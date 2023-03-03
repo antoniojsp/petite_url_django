@@ -59,9 +59,10 @@ def is_hash_used(request):
     custom_hash = request.POST.get('custom', None)
     is_hash_present = Urls.objects.filter(hash_value=custom_hash)
     hash_length = len(is_hash_present)
-    if  hash_length == 0:
-        response = {"is_used": False, "length":hash_length}
+
+    if hash_length == 0:
+        response = {"is_used": False, "length": len(custom_hash)}
     else:
-        response = {"is_used": True, "length":hash_length}
+        response = {"is_used": True, "length": len(custom_hash)}
 
     return JsonResponse(response)

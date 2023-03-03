@@ -26,7 +26,12 @@
         });
 
       $("#url_form").submit(function(event) {
-        event.preventDefault();
+        event.preventDefault()
+        if (!validate_url($('#url').val())){
+            alert("Invalid URL");
+            return
+        }
+
         $.ajax({
                 type: "POST",
                 url: "{% url 'index' %}",
@@ -50,6 +55,12 @@
         });
 
         $("#custom").keyup(function(event) {
+
+                if ($('#custom').val().length == 0){
+                    $("#unique_hash").html("");
+                    return
+                };
+
                 $.ajax({
                 type: "POST",
                 url: "{% url 'is_hash_used' %}",
@@ -59,7 +70,17 @@
                    dataType: "json",
                 },
                 success: function (data) {
-                   console.log(data.is_used);
+                   if (data.is_used == true){
+                        $("#unique_hash").html("").append("Custom hash is being used. ");
+                   }else{
+                        $("#unique_hash").html("").append("Custom hash is avalaible.");
+                   };
+
+                   if(data.length < 8){
+                        $("#hash_length").html("").append("Hash meed to be 8 characters long.");
+                   }else if(data.is_used == false && data.length == 8){
+                       $("#hash_length").html("").append("Good hash!");
+                   };
                 },
                 failure: function () {
                    console.log('Error Encountered!');
@@ -76,6 +97,13 @@
     });
 
 });
+
+
+    function validate_url(url){
+        var re = /^(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/;
+        return re.test($('#url').val())
+    };
+
     function show_result(message){
         $("#result").show("fast");
         $("#url_short").html("").append(message); // delete html content first then add new message
@@ -153,6 +181,7 @@
             </p>
 
             <div id="unique_hash"></div><br>
+            <div id="hash_length"></div><br>
 
             <button id="clear" class="btn btn-success" onclick="clear_form();"> Clear </button>
             <button type="submit" id="submit" class="btn btn-success"> Submit </button>
