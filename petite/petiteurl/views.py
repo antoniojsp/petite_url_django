@@ -18,16 +18,14 @@ def index(request):
         exp_time = request.POST.get('exp_time', None)
         custom = request.POST.get('custom', None)
         if data:
-            response = {'msg': data}
             if custom:
                 hash_value = custom
             else:
                 hash_value = generate_hash(length=8)
+            response = {'hash': hash_value}
 
             if exp_time:
-                print(exp_time)
                 expiration_time = convert_to_utc(exp_time)
-                print(expiration_time)
             else:
                 expiration_time = None
 
