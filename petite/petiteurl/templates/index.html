@@ -16,14 +16,6 @@
 
 
     $(document).ready(function() {
-        function set_date(){
-        var dt = new Date();
-        var time = (1900 +dt.getYear()) + "-" + (1 + dt.getMonth()) + "-" + dt.getDate() + "T" + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
-        $('#expiration').val(time);
-    };
-
-
-
 
       $("#url_form").submit(function(event) {
         event.preventDefault();
@@ -49,8 +41,6 @@
              });
         });
 
-
-
     $('#expires_opt').on('change', function() {
         hide_show("#expires_opt", "#date_local", "#expiration");
     });
@@ -61,11 +51,21 @@
 
 });
 
+    function set_date(){
+        var da = new Date();
+        var y = (1900 + da.getYear())
+        var M = ("0" + (1 + da.getMonth()).toString()).slice(-2)
+        var d= ("0" + (1 + da.getDate()).toString()).slice(-2)
+        var h = ("0" + ( da.getHours()).toString()).slice(-2)
+        var m = ("0" + (1 + da.getMinutes()).toString()).slice(-2)
+        return y + "-" + M + "-" + d + "T" + h + ":" + m
+    };
+
     function clear_form(){
         $('#url_form')[0].reset();
         hide("#date_local", "#expiration");
         hide("#personalized", "#custom");
-     };
+    };
 
     function hide(id_elem, id_required){
         $(id_elem).hide("fast");
@@ -73,6 +73,8 @@
     };
 
     function show(id_elem, id_required){
+        $('#expiration').val(set_date());
+        $('#expiration').attr("min",set_date());
         $(id_elem).show("fast");
         $(id_required).attr("required", true);
     };

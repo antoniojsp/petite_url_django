@@ -4,9 +4,7 @@ from datetime import datetime, timezone
 
 
 def convert_to_utc(time: str):
-    datetime_object = datetime.strptime(time, '%Y-%m-%dT%H:%M')
-    print("date", datetime_object)
-    print("helper", datetime_object.astimezone(timezone.utc))
+    datetime_object = datetime.strptime(time,'%Y-%m-%dT%H:%M')
     return datetime_object.astimezone(timezone.utc)
 
 
