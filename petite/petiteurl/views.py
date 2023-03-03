@@ -49,7 +49,6 @@ def index(request):
 
 
 def redirect_view(request, hashing: str):
-    print("redirect")
     mymember = Urls.objects.get(hash_value=hashing)
     mymember.count += 1
     mymember.save()
@@ -59,9 +58,10 @@ def redirect_view(request, hashing: str):
 def is_hash_used(request):
     custom_hash = request.POST.get('custom', None)
     is_hash_present = Urls.objects.filter(hash_value=custom_hash)
-    if len(is_hash_present) == 0:
-        response = {"is_used": False}
+    hash_length = len(is_hash_present)
+    if  hash_length == 0:
+        response = {"is_used": False, "length":hash_length}
     else:
-        response = {"is_used": True}
+        response = {"is_used": True, "length":hash_length}
 
     return JsonResponse(response)
