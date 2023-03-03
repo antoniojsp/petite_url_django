@@ -50,7 +50,21 @@
         });
 
         $("#custom").keyup(function(event) {
-            console.log($('#custom').val());
+                $.ajax({
+                type: "POST",
+                url: "{% url 'is_hash_used' %}",
+                data: {
+                   custom: $('#custom').val(),
+                   csrfmiddlewaretoken: '{{ csrf_token }}',
+                   dataType: "json",
+                },
+                success: function (data) {
+                   console.log(data.is_used);
+                },
+                failure: function () {
+                   console.log('Error Encountered!');
+                }
+             });
         });
 
     $('#expires_opt').on('change', function() {

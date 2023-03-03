@@ -16,3 +16,6 @@ def generate_hash(length: int) -> str:
         result += list_characters[randrange(0, len(list_characters) - 1)]
 
     return result
+
+def compare_dates(date):
+    pass

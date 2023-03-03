@@ -23,7 +23,6 @@ def index(request):
                 hash_value = generate_hash(length=8)
 
             is_hash_used = Urls.objects.filter(hash_value=hash_value)
-            print(len(is_hash_used))
 
             if len(is_hash_used) > 0:
                 return JsonResponse({"result": "duplicate hash"})
@@ -50,7 +49,19 @@ def index(request):
 
 
 def redirect_view(request, hashing: str):
+    print("redirect")
     mymember = Urls.objects.get(hash_value=hashing)
     mymember.count += 1
     mymember.save()
     return HttpResponseRedirect(mymember.url)
+
+
+def is_hash_used(request):
+    custom_hash = request.POST.get('custom', None)
+    is_hash_present = Urls.objects.filter(hash_value=custom_hash)
+    if len(is_hash_present) == 0:
+        response = {"is_used": False}
+    else:
+        response = {"is_used": True}
+
+    return JsonResponse(response)
