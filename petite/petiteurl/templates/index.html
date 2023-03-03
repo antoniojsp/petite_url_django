@@ -10,7 +10,21 @@
     <p id="response"> </p>
 
     <script>
+
+
+
+
+
     $(document).ready(function() {
+        function set_date(){
+        var dt = new Date();
+        var time = (1900 +dt.getYear()) + "-" + (1 + dt.getMonth()) + "-" + dt.getDate() + "T" + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+        $('#expiration').val(time);
+    };
+
+
+
+
       $("#url_form").submit(function(event) {
         event.preventDefault();
         console.log($('#expiration').val());
@@ -48,21 +62,26 @@
 });
 
     function clear_form(){
-        $('#url').val('');
-        $('#expiration').val('');
-        $('#custom').val('');
+        $('#url_form')[0].reset();
+        hide("#date_local", "#expiration");
+        hide("#personalized", "#custom");
+     };
+
+    function hide(id_elem, id_required){
+        $(id_elem).hide("fast");
+        $(id_required).attr("required", false);
     };
 
+    function show(id_elem, id_required){
+        $(id_elem).show("fast");
+        $(id_required).attr("required", true);
+    };
 
     function hide_show(id_div, id_elem, id_required){
         if ($(id_div).is(':checked')) {
-            $(id_elem).show("fast");
-            $(id_required).attr("required", true);
-
+            show(id_elem, id_required);
         }else{
-            $(id_elem).hide( "fast");
-            $(id_required).attr( "required", false);
-
+            hide(id_elem, id_required);
         }
     };
 

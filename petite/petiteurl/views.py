@@ -17,6 +17,8 @@ def index(request):
         data = request.POST.get('text', None)
         exp_time = request.POST.get('exp_time', None)
         custom = request.POST.get('custom', None)
+        print(type(exp_time))
+        print(exp_time)
         if data:
             response = {'msg': data}
             if custom:
@@ -25,9 +27,9 @@ def index(request):
                 hash_value = generate_hash(length=8)
 
             if exp_time:
-                print(exp_time)
+                # print(exp_time)
                 expiration_time = convert_to_utc(exp_time)
-                print(expiration_time)
+                # print(expiration_time)
             else:
                 expiration_time = None
 
