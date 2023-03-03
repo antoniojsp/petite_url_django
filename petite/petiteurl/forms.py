@@ -29,4 +29,5 @@ class IndexPage(forms.Form):
                              widget=forms.TextInput(attrs={"class": "form-control p-1",
                                                            "maxlength": "10",
                                                            "style": "width:200px;",
-                                                           "id": "custom"}))
+                                                           "id": "custom",
+                                                           "minlength": "8"}))
