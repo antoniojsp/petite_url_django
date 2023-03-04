@@ -19,7 +19,3 @@ def generate_hash(length: int) -> str:
 
 def compare_dates(date):
     pass
-
-import urllib2
-opener = urllib2.build_opener()
-external_sites_html = opener.open(external_sites_url).read()
