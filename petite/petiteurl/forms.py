@@ -17,7 +17,7 @@ class IndexPage(forms.Form):
     expiration = forms.DateTimeField(required=False, label="When? ",
                                      widget=forms.DateTimeInput(attrs={"type": "datetime-local",
                                                                        'class': "form-control p-1",
-                                                                       "style": "width:200px;",
+                                                                       "style": "width:200px; text-align: center;",
                                                                        "id": "expiration"}))
 
     custom_hash_option = forms.BooleanField(required=False, label="Do you want to personalized the hash value?",

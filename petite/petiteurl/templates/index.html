@@ -163,14 +163,19 @@
             {{ form.csrf_token }}
             <p>
                 {{ form.url }}
+            </p>
+    <div >
             <p>
+
                 {{ form.expires_option.label }}
                 {{ form.expires_option }}
             </p>
 
-            <p id="date_local" style="display: none;" >
+            <p id="date_local" style="display: none;">
                 {{ form.expiration.label }}
+                <span style="text-align: center;">
                 {{ form.expiration }}
+                </span>
             </p>
 
             <p>
@@ -182,11 +187,13 @@
                 {{ form.custom.label }}
                 {{ form.custom }}
             </p>
+    </div>
+
 
             <div id="unique_hash"></div><br>
             <div id="hash_length"></div><br>
 
-            <div style=" text-align: center;">
+            <div style="text-align: center;">
             <button id="clear" class="btn btn-success" onclick="clear_form();"> Clear </button>
             <button type="submit" id="submit" class="btn btn-success"> Submit </button>
             </div>
