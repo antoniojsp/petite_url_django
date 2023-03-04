@@ -41,7 +41,7 @@
                 },
                 success: function (data) {
                    clear_form();
-                   show_result(data.result);
+                   show_result(data);
                 },
                 failure: function () {
                    console.log('Error Encountered!');
@@ -104,7 +104,8 @@
 
     function show_result(message){
         $("#result").show("fast");
-        $("#url_short").html("").append(message); // delete html content first then add new message
+        $("#title").html("").append(message.title)
+        $("#url_short").html("").append(message.result); // delete html content first then add new message
         $("#url_short").attr("href", message);
     };
     function set_date(){
@@ -151,7 +152,7 @@
 
     </script>
 <div id="result" class="alert alert-success" role="alert" style="display: none;" >
-  <h4 class="alert-heading">Your customize url is: </h4>
+    <h4 class="alert-heading">Your customize URL for "<strong id="title"></strong>" is: </h4>
     <a id="url_short"></a>
 </div>
 

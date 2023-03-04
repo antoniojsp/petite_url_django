@@ -1,8 +1,8 @@
-from .forms import IndexPage
-from .models import Urls
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.http import HttpResponseRedirect
+from .models import Urls
+from .forms import IndexPage
 from .helpers import generate_hash, convert_to_utc, get_title
 
 
