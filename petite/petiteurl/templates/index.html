@@ -7,29 +7,27 @@
     </div>
 
     <div class="container mt-3">
-    <p id="response"> </p>
-
     <script>
-
-
-
-
-
    $(document).ready(function() {
-
-
+        // clear buttom handler
         $( "#url" ).click(function() {
            if ($("#url_short").html().length > 0) {
                clear_form();
            }
         });
 
+       //controls the submit form
       $("#url_form").submit(function(event) {
         event.preventDefault()
         if (!validate_url($('#url').val())){
-            alert("Invalid URL");
+            alert("Invalid URL.");
             return
-        }
+        };
+
+        if ($("#unique_hash").html() =="Custom hash is not available." ){
+            alert("Custom hash is already in used.");
+            return
+        };
 
         $.ajax({
                 type: "POST",
@@ -42,10 +40,8 @@
                    dataType: "json",
                 },
                 success: function (data) {
-                   console.log(data.result);
                    clear_form();
                    show_result(data.result);
-
                 },
                 failure: function () {
                    console.log('Error Encountered!');
@@ -53,21 +49,21 @@
              });
         });
 
+        //control the custom hash option
         $("#custom").keyup(function(event) {
-
                 var long = $('#custom').val().length
 
                 if (long == 0){
                     $("#unique_hash").html("");
-                    $("#hash_length").html("");
                     return
                 };
 
                 if (long < 8){
-                    $("#unique_hash").html("")
-                    $("#hash_length").html("Hash needs to be 8 characters long. It needs "+ (8 - long) +" characters more")
+                    $("#unique_hash").html("Hash needs to be 8 characters long. It needs "+ (8 - long) +" characters more")
                     return
-                }
+                }else{
+                    $("#unique_hash").html("");
+                };
 
                 $.ajax({
                 type: "POST",
@@ -78,7 +74,7 @@
                    dataType: "json",
                 },
                 success: function (data) {
-                    if (!data.is_used){
+                    if (data.valid){
                         $("#unique_hash").html("Custom hash is available.")
                     }else{
                         $("#unique_hash").html("Custom hash is not available.")

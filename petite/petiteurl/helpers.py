@@ -1,8 +1,8 @@
 from string import ascii_lowercase, digits
 from random import randrange
 from datetime import datetime, timezone
-from .models import Urls
-
+import requests
+from bs4 import BeautifulSoup
 
 def convert_to_utc(time: str):
     datetime_object = datetime.strptime(time, '%Y-%m-%dT%H:%M')
@@ -17,5 +17,14 @@ def generate_hash(length: int) -> str:
 
     return result
 
+def get_title(url:str):
+    # making requests instance
+    reqs = requests.get(url)
+    # using the BeautifulSoup module
+    soup = BeautifulSoup(reqs.text, 'html.parser')
+    # displaying the title
+    return soup.title.string[:20] + "..."
+
 def compare_dates(date):
     pass
+
