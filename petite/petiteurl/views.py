@@ -61,8 +61,8 @@ def is_hash_used(request):
     hash_length = len(is_hash_present)
 
     if hash_length == 0:
-        response = {"is_used": False, "length": len(custom_hash)}
+        response = {"is_used": False}
     else:
-        response = {"is_used": True, "length": len(custom_hash)}
+        response = {"is_used": True}
 
     return JsonResponse(response)

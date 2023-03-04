@@ -25,9 +25,9 @@ class IndexPage(forms.Form):
                                                 attrs={"id": "custom_opt"})
                                             )
 
-    custom = forms.CharField(required=False, label="Enter personalized hash: ",
+    custom = forms.CharField(required=False, label="Enter personalized hash (8 characters long): ",
                              widget=forms.TextInput(attrs={"class": "form-control p-1",
-                                                           "maxlength": "10",
+                                                           "maxlength": "8",
                                                            "style": "width:200px;",
                                                            "id": "custom",
                                                            "minlength": "8"}))
