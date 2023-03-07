@@ -28,7 +28,7 @@
             alert("Custom hash is already in used.");
             return
         };
-
+console.log($('#expiration').val());
         $.ajax({
                 type: "POST",
                 url: "{% url 'index' %}",

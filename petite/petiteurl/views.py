@@ -3,20 +3,24 @@ from django.http import JsonResponse
 from django.http import HttpResponseRedirect
 from .models import Urls
 from .forms import IndexPage
-from .helpers import generate_hash, convert_to_utc, get_title
-
+from .helpers import generate_hash, get_title, convert_to_utc
+from datetime import datetime, timezone
 
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
-
 def index(request):
     context = {'form': IndexPage()}
+
+    string = "2023-03-07T16:43"
+    print(convert_to_utc(string))
+
+
     if is_ajax(request):
         url = request.POST.get('text', None)
         exp_time = request.POST.get('exp_time', None)
         custom = request.POST.get('custom', None)
-        if url:
+        if is_ajax(request):
             if custom:
                 hash_value = custom
             else:
@@ -26,17 +30,17 @@ def index(request):
 
             if len(is_hash_used) > 0:
                 return JsonResponse({"result": "duplicate", "title": ""})
-
             if exp_time:
                 expiration_time = convert_to_utc(exp_time)
             else:
                 expiration_time = None
             title = get_title(url)
-            print(title)
+
             a = Urls(hash_value=hash_value,
                      url=url,
                      count=0,
-                     exp_date=expiration_time)
+                     exp_date=expiration_time,
+                     date_added=datetime.now(timezone.utc))
 
             response = {'result': request.build_absolute_uri() + hash_value, "title": title}
 
@@ -59,6 +63,10 @@ def redirect_view(request, hashing: str):
 def is_hash_used(request):
     custom_hash = request.POST.get('custom', None)
     is_hash_present = Urls.objects.filter(hash_value=custom_hash)
+
+    print("expire", is_hash_present["exp_date"])
+    print("added", is_hash_present["date_added"])
+    print(is_hash_present)
     exists = len(is_hash_present)
     hash_len = len(custom_hash)
 
