@@ -28,13 +28,24 @@
             alert("Custom hash is already in used.");
             return
         };
-console.log($('#expiration').val());
+
+
+        var date = $('#expiration').val();
+        var expiration_date = "";
+
+        if (date != ""){
+            var expiration_date = new Date(date).toISOString();
+
+            console.log(expiration_date);
+        };
+
+
         $.ajax({
                 type: "POST",
                 url: "{% url 'index' %}",
                 data: {
                    text: $('#url').val(),
-                   exp_time: $('#expiration').val(),
+                   exp_time: expiration_date,
                    custom: $('#custom').val(),
                    csrfmiddlewaretoken: '{{ csrf_token }}',
                    dataType: "json",
@@ -112,7 +123,7 @@ console.log($('#expiration').val());
         var da = new Date();
         var y = (1900 + da.getYear())
         var M = ("0" + (1 + da.getMonth()).toString()).slice(-2)
-        var d= ("0" + (1 + da.getDate()).toString()).slice(-2)
+        var d= ("0" + (da.getDate()).toString()).slice(-2)
         var h = ("0" + ( da.getHours()).toString()).slice(-2)
         var m = ("0" + (1 + da.getMinutes()).toString()).slice(-2)
         return y + "-" + M + "-" + d + "T" + h + ":" + m
