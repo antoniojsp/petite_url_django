@@ -23,6 +23,7 @@
 
         // check for correct url form
         //TODO: Check if the website is alive and healthy.
+
         if (!validate_url($('#url').val())){
             alert("Invalid URL.");
             return
@@ -36,6 +37,11 @@
             return
         };
 
+        if (current_hash_input.length < 8){
+            alert("The custom hash value is incorrect.");
+            return
+        };
+
         if ($("#unique_hash").html() == "Custom hash is not available." ){
             alert("Custom hash is already in used.");
             return
@@ -44,11 +50,10 @@
         //gather expiration date input
         var date = $('#expiration').val();
         var expiration_date = "";
-
         if (date != ""){
             var expiration_date = new Date(date).toISOString();
-            console.log(expiration_date);
         };
+
 
 
         $.ajax({
