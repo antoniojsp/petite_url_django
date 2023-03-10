@@ -17,17 +17,24 @@
            }
         });
 
-       //controls the submit form
-      $("#url_form").submit(function(event) {
+        //controls the submit form
+        $("#url_form").submit(function(event) {
         event.preventDefault()
+
         // check for correct url form
         //TODO: Check if the website is alive and healthy.
-
         if (!validate_url($('#url').val())){
             alert("Invalid URL.");
             return
         };
 
+
+        var current_hash_input = $('#custom').val();
+        var invalid_char = is_valid_hash(current_hash_input);
+        if (invalid_char.length > 0){
+            alert('"' + invalid_char  + '" is an invalid character.');
+            return
+        };
 
         if ($("#unique_hash").html() == "Custom hash is not available." ){
             alert("Custom hash is already in used.");
@@ -76,19 +83,20 @@
                 var current_input = $('#custom').val();
                 var current_input_length = current_input.length;
 
-                var lower_case = "abcdefghijklmnopqrstuvwxyz";
-                var digits = "0123456789";
-
-<!--                for (let i = 0; i < current_input_length; i++) {-->
-<!--                     current-->
-<!--                }-->
-
+                // check for invalid characteres
+                var invalid_char = is_valid_hash(current_input);
+                if (invalid_char.length > 0){
+                    $("#unique_hash").html('"' + invalid_char  + '" is an invalid character.');
+                    return
+                };
 
                 // checks length of custom input and checks validity. We do this once again in the server side.
                 if (current_input_length == 0){
                     $("#unique_hash").html("");
                     return
                 };
+
+                // checks how many more characters it needs.
                 if (current_input_length < 8){
                     $("#unique_hash").html("Hash needs to be 8 characters long. It needs "+ (8 - current_input_length) +" characters more")
                     return
@@ -127,6 +135,19 @@
     });
 
 });
+
+
+function is_valid_hash(hash){
+    var allowed_chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (let i = 0; i < hash.length; i++) {
+         if (!allowed_chars.includes(hash[i])){
+            return hash[i]
+         };
+    };
+
+    return "";
+};
 
 
     function validate_url(url){
