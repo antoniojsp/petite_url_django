@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.http import HttpResponseRedirect
 from .models import Urls
 from .forms import IndexPage
-from .helpers import generate_hash, get_title
+from .helpers import generate_hash, get_title, is_expired
 
 
 def is_ajax(request):
@@ -17,41 +17,39 @@ def index(request):
         url = request.POST.get('text', None)
         exp_time = request.POST.get('exp_time', None)
         custom = request.POST.get('custom', None)
-        print(exp_time)
         if is_ajax(request):
-
+            # TODO: check "custom" to have onlue [a-z0-9] characters.
             hash_value = custom if custom else generate_hash(length=8)
             expiration_time = exp_time if exp_time else None
 
             is_hash_taken = Urls.objects.filter(hash_value=hash_value)
 
             # for now, we will enforce a 8 char length hash value. Client checks for that but we add extra protection.
-            if len(is_hash_taken) > 0 or len(hash_value) != 8:
+            if len(is_hash_taken) > 0 or len(hash_value) != 8:  # TODO change return to a 403 message
                 return JsonResponse({"result": "ERROR", "title": "Something went really wrong!"})
 
+            # TODO check that url is valid, alive and healthy (We do this on the server side)
+            # get_title() may throw an error if the website is invalid.
             title = get_title(url)
 
-            a = Urls(hash_value=hash_value,
-                     url=url,
-                     count=0,
-                     exp_date=expiration_time
-                     )
+            new_url_entry = Urls(hash_value=hash_value,
+                                 url=url,
+                                 count=0,
+                                 exp_date=expiration_time
+                                 )
 
             response = {'result': request.build_absolute_uri() + hash_value, "title": title}
 
-            a.save()
-            return JsonResponse(response)
-        else:
-            response = {'result': "", 'title': ""}
+            new_url_entry.save()
             return JsonResponse(response)
 
     return render(request, "index.html", context)
 
 
 def redirect_view(request, hashing: str):
-
     mymember = Urls.objects.get(hash_value=hashing)
-    print(mymember)
+
+    print(is_expired(mymember.exp_date))
     mymember.count += 1
     mymember.save()
     return HttpResponseRedirect(mymember.url)

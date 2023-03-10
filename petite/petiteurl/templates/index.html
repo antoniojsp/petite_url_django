@@ -9,7 +9,8 @@
     <div class="container mt-3">
     <script>
    $(document).ready(function() {
-        // clear buttom handler
+        // clear url when url input is click and there is a previous tiny url message displaying
+        //TODO: Make it more clear, make a list of banned words like "ADMIN", etc
         $( "#url" ).click(function() {
            if ($("#url_short").html().length > 0) {
                clear_form();
@@ -19,23 +20,25 @@
        //controls the submit form
       $("#url_form").submit(function(event) {
         event.preventDefault()
+        // check for correct url form
+        //TODO: Check if the website is alive and healthy.
         if (!validate_url($('#url').val())){
             alert("Invalid URL.");
             return
         };
 
-        if ($("#unique_hash").html() =="Custom hash is not available." ){
+        if ($("#unique_hash").html() == "Custom hash is not available." ){
             alert("Custom hash is already in used.");
             return
         };
 
 
+        //gather expiration date input
         var date = $('#expiration').val();
         var expiration_date = "";
 
         if (date != ""){
             var expiration_date = new Date(date).toISOString();
-
             console.log(expiration_date);
         };
 
@@ -60,21 +63,29 @@
              });
         });
 
-        //control the custom hash option
+        //check that the optional custom hash given is valid and not already taken.
         $("#custom").keyup(function(event) {
-                var long = $('#custom').val().length
 
-                if (long == 0){
+
+                // Hash is valid when it is 8 characters long, has no spaces or special characters
+                // and it's not being used.
+                // TODO: check for spaces and special characters. At this moments, we just accept lowercase
+                // letters and numbers ([a-z0-9])
+
+                var custom_input_length = $('#custom').val().length
+
+                // checks length of custom input and checks validity. We do this once again in the server side.
+                if (custom_input_length == 0){
                     $("#unique_hash").html("");
                     return
                 };
-
-                if (long < 8){
-                    $("#unique_hash").html("Hash needs to be 8 characters long. It needs "+ (8 - long) +" characters more")
+                if (custom_input_length < 8){
+                    $("#unique_hash").html("Hash needs to be 8 characters long. It needs "+ (8 - custom_input_length) +" characters more")
                     return
                 }else{
                     $("#unique_hash").html("");
                 };
+
 
                 $.ajax({
                 type: "POST",
@@ -117,8 +128,9 @@
         $("#result").show("fast");
         $("#title").html("").append(message.title)
         $("#url_short").html("").append(message.result); // delete html content first then add new message
-        $("#url_short").attr("href", message);
+        $("#url_short").attr("href", message.result);
     };
+
     function set_date(){
         var da = new Date();
         var y = (1900 + da.getYear())
@@ -170,7 +182,6 @@
 </div>
 
 <form id="url_form"  method="POST">
-
             {{ form.csrf_token }}
             <p>
                 {{ form.url }}
