@@ -29,7 +29,6 @@
             return
         };
 
-
         var current_hash_input = $('#custom').val();
         var invalid_char = is_valid_hash(current_hash_input);
         if (invalid_char.length > 0){
@@ -37,7 +36,7 @@
             return
         };
 
-        if (current_hash_input.length < 8){
+        if ($("#custom_hash_option").is(':checked') && current_hash_input.length < 8){
             alert("The custom hash value is incorrect.");
             return
         };
@@ -47,14 +46,12 @@
             return
         };
 
-        //gather expiration date input
+        //gather expiration date input. Check if option is on or off.
         var date = $('#expiration').val();
         var expiration_date = "";
-        if (date != ""){
+        if ($("#expires_opt").is(':checked') && date != ""){
             var expiration_date = new Date(date).toISOString();
         };
-
-
 
         $.ajax({
                 type: "POST",
@@ -78,7 +75,6 @@
 
         //check that the optional custom hash given is valid and not already taken.
         $("#custom").keyup(function(event) {
-
 
                 // Hash is valid when it is 8 characters long, has no spaces or special characters
                 // and it's not being used.
@@ -154,62 +150,61 @@ function is_valid_hash(hash){
     return "";
 };
 
+function validate_url(url){
+    var re = /^(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/;
+    return re.test($('#url').val())
+};
 
-    function validate_url(url){
-        var re = /^(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/;
-        return re.test($('#url').val())
-    };
+function show_result(message){
+    $("#result").show("fast");
+    $("#title").html("").append(message.title)
+    $("#url_short").html("").append(message.result); // delete html content first then add new message
+    $("#url_short").attr("href", message.result);
+    $("#url_short").attr("target", "_blank");
+};
 
-    function show_result(message){
-        $("#result").show("fast");
-        $("#title").html("").append(message.title)
-        $("#url_short").html("").append(message.result); // delete html content first then add new message
-        $("#url_short").attr("href", message.result);
-    };
+function set_date(){
+    var da = new Date();
+    var y = (1900 + da.getYear())
+    var M = ("0" + (1 + da.getMonth()).toString()).slice(-2)
+    var d= ("0" + (da.getDate()).toString()).slice(-2)
+    var h = ("0" + ( da.getHours()).toString()).slice(-2)
+    var m = ("0" + (1 + da.getMinutes()).toString()).slice(-2)
+    return y + "-" + M + "-" + d + "T" + h + ":" + m
+};
 
-    function set_date(){
-        var da = new Date();
-        var y = (1900 + da.getYear())
-        var M = ("0" + (1 + da.getMonth()).toString()).slice(-2)
-        var d= ("0" + (da.getDate()).toString()).slice(-2)
-        var h = ("0" + ( da.getHours()).toString()).slice(-2)
-        var m = ("0" + (1 + da.getMinutes()).toString()).slice(-2)
-        return y + "-" + M + "-" + d + "T" + h + ":" + m
-    };
+function clear_form(){
+    $('#url_form')[0].reset();
+    $("#url_short").html("");
+    $("#unique_hash").html("");
+    $("#hash_length").html("");
+    $("#result").hide("fast");
+    hide("#date_local", "#expiration");
+    hide("#personalized", "#custom");
 
-    function clear_form(){
-        $('#url_form')[0].reset();
-        $("#url_short").html("");
-        $("#unique_hash").html("");
-        $("#hash_length").html("");
-        $("#result").hide("fast");
-        hide("#date_local", "#expiration");
-        hide("#personalized", "#custom");
+};
 
-    };
+function hide(id_elem, id_required){
+    $(id_elem).hide("fast");
+    $(id_required).attr("required", false);
+};
 
-    function hide(id_elem, id_required){
-        $(id_elem).hide("fast");
-        $(id_required).attr("required", false);
-    };
+function show(id_elem, id_required){
+    $('#expiration').val(set_date());
+    $('#expiration').attr("min",set_date());
+    $(id_elem).show("fast");
+    $(id_required).attr("required", true);
+};
 
-    function show(id_elem, id_required){
-        $('#expiration').val(set_date());
-        $('#expiration').attr("min",set_date());
-        $(id_elem).show("fast");
-        $(id_required).attr("required", true);
-    };
+function hide_show(id_div, id_elem, id_required){
+    if ($(id_div).is(':checked')) {
+        show(id_elem, id_required);
+    }else{
+        hide(id_elem, id_required);
+    }
+};
 
-    function hide_show(id_div, id_elem, id_required){
-        if ($(id_div).is(':checked')) {
-            show(id_elem, id_required);
-        }else{
-            hide(id_elem, id_required);
-        }
-    };
-
-
-    </script>
+</script>
 
 
 <div id="result" class="alert alert-success" role="alert" style="display: none;" >
