@@ -22,16 +22,17 @@
         event.preventDefault()
         // check for correct url form
         //TODO: Check if the website is alive and healthy.
+
         if (!validate_url($('#url').val())){
             alert("Invalid URL.");
             return
         };
 
+
         if ($("#unique_hash").html() == "Custom hash is not available." ){
             alert("Custom hash is already in used.");
             return
         };
-
 
         //gather expiration date input
         var date = $('#expiration').val();
@@ -72,15 +73,24 @@
                 // TODO: check for spaces and special characters. At this moments, we just accept lowercase
                 // letters and numbers ([a-z0-9])
 
-                var custom_input_length = $('#custom').val().length
+                var current_input = $('#custom').val();
+                var current_input_length = current_input.length;
+
+                var lower_case = "abcdefghijklmnopqrstuvwxyz";
+                var digits = "0123456789";
+
+<!--                for (let i = 0; i < current_input_length; i++) {-->
+<!--                     current-->
+<!--                }-->
+
 
                 // checks length of custom input and checks validity. We do this once again in the server side.
-                if (custom_input_length == 0){
+                if (current_input_length == 0){
                     $("#unique_hash").html("");
                     return
                 };
-                if (custom_input_length < 8){
-                    $("#unique_hash").html("Hash needs to be 8 characters long. It needs "+ (8 - custom_input_length) +" characters more")
+                if (current_input_length < 8){
+                    $("#unique_hash").html("Hash needs to be 8 characters long. It needs "+ (8 - current_input_length) +" characters more")
                     return
                 }else{
                     $("#unique_hash").html("");
@@ -91,7 +101,7 @@
                 type: "POST",
                 url: "{% url 'is_hash_used' %}",
                 data: {
-                   custom: $('#custom').val(),
+                   custom: current_input,
                    csrfmiddlewaretoken: '{{ csrf_token }}',
                    dataType: "json",
                 },

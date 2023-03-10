@@ -5,7 +5,7 @@ import requests
 from string import ascii_lowercase, digits
 
 
-def is_expired(exp_date:datetime):
+def is_expired(exp_date: datetime):
     """
     if exp_date (expiration date) is less than current date (now), then return true
     :param exp_date (datetime aware object
@@ -13,6 +13,7 @@ def is_expired(exp_date:datetime):
     """
     now = datetime.now(timezone.utc)
     return exp_date < now
+
 
 def generate_hash(length: int) -> str:
     """

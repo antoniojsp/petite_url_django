@@ -49,7 +49,9 @@ def index(request):
 def redirect_view(request, hashing: str):
     mymember = Urls.objects.get(hash_value=hashing)
 
-    print(is_expired(mymember.exp_date))
+    if is_expired(mymember.exp_date):
+        return render(request, "404.html")
+
     mymember.count += 1
     mymember.save()
     return HttpResponseRedirect(mymember.url)
