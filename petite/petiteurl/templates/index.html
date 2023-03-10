@@ -9,123 +9,114 @@
     <div class="container mt-3">
     <script>
    $(document).ready(function() {
-        // clear url when url input is click and there is a previous tiny url message displaying
+        //Clear url when url input is click and there is a previous tiny url message displaying
         //TODO: Make it more clear, make a list of banned words like "ADMIN", etc
         $( "#url" ).click(function() {
-           if ($("#url_short").html().length > 0) {
-               clear_form();
-           }
+               if ($("#url_short").html().length > 0) {
+                   clear_form();
+               }
         });
 
         //controls the submit form
         $("#url_form").submit(function(event) {
-        event.preventDefault()
+            event.preventDefault()
 
-        // check for correct url form
-        //TODO: Check if the website is alive and healthy.
+            // check for correct url form
+            //TODO: Check if the website is alive and healthy.
 
-        if (!validate_url($('#url').val())){
-            alert("Invalid URL.");
-            return
-        };
+            // VALIDATE DATA: values
 
-        var current_hash_input = $('#custom').val();
-        var invalid_char = is_valid_hash(current_hash_input);
-        if (invalid_char.length > 0){
-            alert('"' + invalid_char  + '" is an invalid character.');
-            return
-        };
+            const input_dict = {
+            url:$('#url').val(),
+            current_hash_input:$('#custom').val(),
+            is_hash_checked:$("#custom_hash_option").is(':checked'),
+            date:$('#expiration').val(),
+            is_exp_checked:$("#expires_opt").is(':checked')
+            };
 
-        if ($("#custom_hash_option").is(':checked') && current_hash_input.length < 8){
-            alert("The custom hash value is incorrect.");
-            return
-        };
+            if (!is_valid_data(input_dict)){
+                console.log("Invalid Input");
+                return
+            };
 
-        if ($("#unique_hash").html() == "Custom hash is not available." ){
-            alert("Custom hash is already in used.");
-            return
-        };
+            //gather expiration date input. Check if option is on or off.
+            var expiration_date = "";
+            if ( input_dict.is_exp_checked && input_dict.date != ""){
+                var expiration_date = new Date(input_dict.date).toISOString();
+            };
 
-        //gather expiration date input. Check if option is on or off.
-        var date = $('#expiration').val();
-        var expiration_date = "";
-        if ($("#expires_opt").is(':checked') && date != ""){
-            var expiration_date = new Date(date).toISOString();
-        };
-
-        $.ajax({
-                type: "POST",
-                url: "{% url 'index' %}",
-                data: {
-                   text: $('#url').val(),
-                   exp_time: expiration_date,
-                   custom: $('#custom').val(),
-                   csrfmiddlewaretoken: '{{ csrf_token }}',
-                   dataType: "json",
-                },
-                success: function (data) {
-                   clear_form();
-                   show_result(data);
-                },
-                failure: function () {
-                   console.log('Error Encountered!');
-                }
-             });
+            $.ajax({
+                    type: "POST",
+                    url: "{% url 'index' %}",
+                    data: {
+                       text: input_dict.url,
+                       exp_time: expiration_date,
+                       custom: input_dict.current_hash_input,
+                       csrfmiddlewaretoken: '{{ csrf_token }}',
+                       dataType: "json",
+                    },
+                    success: function (data) {
+                       clear_form();
+                       show_result(data);
+                    },
+                    failure: function () {
+                       console.log('Error Encountered!');
+                    }
+                 });
         });
 
         //check that the optional custom hash given is valid and not already taken.
         $("#custom").keyup(function(event) {
 
-                // Hash is valid when it is 8 characters long, has no spaces or special characters
-                // and it's not being used.
-                // TODO: check for spaces and special characters. At this moments, we just accept lowercase
-                // letters and numbers ([a-z0-9])
+            // Hash is valid when it is 8 characters long, has no spaces or special characters
+            // and it's not being used.
+            // TODO: check for spaces and special characters. At this moments, we just accept lowercase
+            // letters and numbers ([a-z0-9])
 
-                var current_input = $('#custom').val();
-                var current_input_length = current_input.length;
+            var current_input = $('#custom').val();
+            var current_input_length = current_input.length;
 
-                // check for invalid characteres
-                var invalid_char = is_valid_hash(current_input);
-                if (invalid_char.length > 0){
-                    $("#unique_hash").html('"' + invalid_char  + '" is an invalid character.');
-                    return
-                };
+            // check for invalid characteres
+            var invalid_char = is_valid_hash(current_input);
+            if (invalid_char.length > 0){
+                $("#unique_hash").html('"' + invalid_char  + '" is an invalid character.');
+                return
+            };
 
-                // checks length of custom input and checks validity. We do this once again in the server side.
-                if (current_input_length == 0){
-                    $("#unique_hash").html("");
-                    return
-                };
+            // checks length of custom input and checks validity. We do this once again in the server side.
+            if (current_input_length == 0){
+                $("#unique_hash").html("");
+                return
+            };
 
-                // checks how many more characters it needs.
-                if (current_input_length < 8){
-                    $("#unique_hash").html("Hash needs to be 8 characters long. It needs "+ (8 - current_input_length) +" characters more")
-                    return
+            // checks how many more characters it needs.
+            if (current_input_length < 8){
+                $("#unique_hash").html("Hash needs to be 8 characters long. It needs "+ (8 - current_input_length) +" characters more")
+                return
+            }else{
+                $("#unique_hash").html("");
+            };
+
+            $.ajax({
+            type: "POST",
+            url: "{% url 'is_hash_used' %}",
+            data: {
+               custom: current_input,
+               csrfmiddlewaretoken: '{{ csrf_token }}',
+               dataType: "json",
+            },
+            success: function (data) {
+                if (data.valid){
+                    $("#unique_hash").html("Custom hash is available.")
                 }else{
-                    $("#unique_hash").html("");
+                    $("#unique_hash").html("Custom hash is not available.")
                 };
-
-
-                $.ajax({
-                type: "POST",
-                url: "{% url 'is_hash_used' %}",
-                data: {
-                   custom: current_input,
-                   csrfmiddlewaretoken: '{{ csrf_token }}',
-                   dataType: "json",
-                },
-                success: function (data) {
-                    if (data.valid){
-                        $("#unique_hash").html("Custom hash is available.")
-                    }else{
-                        $("#unique_hash").html("Custom hash is not available.")
-                    };
-                },
-                failure: function () {
-                   console.log('Error Encountered!');
-                }
-             });
-        });
+            },
+            failure: function () {
+               console.log('Error Encountered!');
+            }
+         });
+       });
 
     $('#expires_opt').on('change', function() {
         hide_show("#expires_opt", "#date_local", "#expiration");
@@ -138,6 +129,36 @@
 });
 
 
+function is_valid_data(dict){
+    <!--url, current_hash_input, is_opthash_checked, date, is_expopt_checked-->
+    if (!validate_url(dict.url)){
+        alert("Invalid URL.");
+        return false
+    };
+
+    var current_hash_input = dict.current_hash_input;
+    var invalid_char = is_valid_hash(current_hash_input);
+    if (invalid_char.length > 0){
+        alert('"' + invalid_char  + '" is an invalid character.');
+        return false
+    };
+
+    if (dict.is_hash_checked && current_hash_input.length < 8){
+        alert("The custom hash value is incorrect.");
+        return
+    };
+
+    // TODO: improve
+    if ($("#unique_hash").html() == "Custom hash is not available." ){
+        alert("Custom hash is already in used.");
+        return false
+    };
+
+    return true
+};
+
+
+
 function is_valid_hash(hash){
     var allowed_chars = "abcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -146,7 +167,6 @@ function is_valid_hash(hash){
             return hash[i]
          };
     };
-
     return "";
 };
 

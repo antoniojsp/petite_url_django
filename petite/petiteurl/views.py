@@ -4,11 +4,14 @@ from django.http import HttpResponseRedirect
 from .models import Urls
 from .forms import IndexPage
 from .helpers import generate_hash, get_title, is_expired, is_valid_hash
+from django.core.exceptions import PermissionDenied
 
 
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
+def error_403(request):
+    return render(request, '500.html')
 
 def index(request):
     context = {'form': IndexPage()}
@@ -22,20 +25,22 @@ def index(request):
 
         if not is_valid_hash(hash_value, length=8):  # checks custom for a valid hash value
             print(f"{custom} has invalid characters for a custom hash or length is incorrect")
-            return JsonResponse({"result": "ERROR", "title": "Something went really wrong!"})
+            raise Exception('This is a test error')
+
+            # return JsonResponse({"result": "ERROR", "title": "custom hash or length is incorrect"})
 
         hash_value = custom if custom else generate_hash(length=8)
         expiration_time = exp_time if exp_time else None
-        is_hash_taken = Urls.objects.filter(hash_value=hash_value)
 
+        is_hash_taken = Urls.objects.filter(hash_value=hash_value)
         # Checks if the hash value is in use.
-        if len(is_hash_taken) > 0:  # TODO change return to a 403 message
-            return JsonResponse({"result": "ERROR", "title": "Something went really wrong!"})
+        if is_hash_taken:  # TODO change return to a 403 message
+            print(f"{hash_value}: Hash Value already taken.")
+            return JsonResponse({"result": "ERROR", "title": "hash in use"})
 
         # TODO check that url is valid, alive and healthy (We do this on the server side)
         # get_title() may throw an error if the website is invalid.
         title = get_title(url)
-
         new_url_entry = Urls(hash_value=hash_value,
                              url=url,
                              count=0,
@@ -48,7 +53,6 @@ def index(request):
         return JsonResponse(response)
 
     return render(request, "index.html", context)
-
 
 def redirect_view(request, hashing: str):
     """
