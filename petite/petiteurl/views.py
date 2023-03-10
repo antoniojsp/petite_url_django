@@ -47,7 +47,14 @@ def index(request):
 
 
 def redirect_view(request, hashing: str):
-    mymember = Urls.objects.get(hash_value=hashing)
+
+    try:
+        mymember = Urls.objects.get(hash_value=hashing)
+    except Exception as e:
+        print('Exception: {}'.format(e))
+        return render(request, "404.html")
+
+
 
     if is_expired(mymember.exp_date):
         return render(request, "404.html")
