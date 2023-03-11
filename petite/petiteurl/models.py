@@ -10,7 +10,4 @@ class Urls(models.Model):
 
     def __str__(self):
         return f"Hash Value: {self.hash_value}," \
-               f"URL: {self.url}," \
-               f"Expiration date: {self.exp_date}," \
-               f"date_added: {self.date_added}," \
-               f"count = {self.count}"
+               f"URL: {self.url}"

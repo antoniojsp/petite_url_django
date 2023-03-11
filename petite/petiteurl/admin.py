@@ -8,8 +8,4 @@ class MemberAdmin(admin.ModelAdmin):
 
     list_display = ("hash_value", "url", "date_added", "exp_date", "count")
 
-    @property
-    def short_description(self):
-        return truncatechars(self.description, 20)
-
 admin.site.register(Urls, MemberAdmin)

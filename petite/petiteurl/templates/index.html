@@ -181,6 +181,7 @@ function show_result(message){
     $("#url_short").html("").append(message.result); // delete html content first then add new message
     $("#url_short").attr("href", message.result);
     $("#url_short").attr("target", "_blank");
+
 };
 
 function set_date(){
@@ -224,12 +225,22 @@ function hide_show(id_div, id_elem, id_required){
     }
 };
 
-</script>
+function copyToClipboard(element) {
+  var $temp = $("<input>");
+  $("body").append($temp);
+  $temp.val($(element).text()).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
 
+
+
+</script>
 
 <div id="result" class="alert alert-success" role="alert" style="display: none;" >
     <h4 class="alert-heading">Your customize URL for "<strong id="title"></strong>" is: </h4>
-    <a id="url_short"></a>
+    <a id="url_short"> </a>
+    <button onclick="copyToClipboard('#url_short')" class="btn btn-success">Copy!</button>
 </div>
 
 <form id="url_form"  method="POST">
